@@ -16,6 +16,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
 from openpyxl import load_workbook
+import urllib3
+
 
 #%% Variable Declarations
 file_path = "C:\\Users\\ayush.kapoor\\Desktop\\input.xlsx" 
@@ -135,13 +137,15 @@ def sendMail(districtId,data,numRows):
     HOSTNAME = 'smtp.gmail.com'  
     PORT = '465'
     CONTEXT= ssl.create_default_context()
-    email_message = ""
-    from_password= ""     
+    from_password= "Ch3cooh!@"     
     i=2
     while(i<=numRows):
+        
         if ((sheet.cell(i,7).value)==districtId):
+            print(str(sheet.cell(i,7).value))
             print(sheet.cell(i,3).value)
             msg = MIMEMultipart('alternative')
+            email_message = ""
             msg['From'] = "Ayush Kapoor ayushmailer111@gmail.com"
             msg['Subject'] = "ATTENTION: CoWin Vaccination slots for 18+ available at "+ str(len(data))+" centres in "+sheet.cell(i,6).value+', '+sheet.cell(i,5).value
             msg['To'] = sheet.cell(i,4).value
@@ -159,18 +163,19 @@ def sendMail(districtId,data,numRows):
 #key = ""
 #%% Main 
 # Driver setup 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 cowin_api_url = "https://api.cowin.gov.in/api/v2/appointment/sessions/public/calendarByDistrict"
 districtCodes = []
 while True:
     i=2
     while(sheet.cell(i,3).value!=None):
-        #print(sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
+        print(sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
         districtCodes.append(sheet.cell(i,7).value)
         i+=1  
-    numRows = len(districtCodes) 
+    numRows = i-1
     districtCodes = list(set(districtCodes))
-    
+    print('------------>'+str(numRows))
     for j in range(0,len(districtCodes)):
         print('------>'+str(districtCodes[j]))
         fetchDetails(cowin_api_url,districtCodes[j],numRows)
-    time.sleep(1200)    
+    time.sleep(1200)
