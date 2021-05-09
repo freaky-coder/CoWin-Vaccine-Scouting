@@ -1,4 +1,4 @@
-# Function to send inital registration email to the users
+#Function to send inital registration email to the users
 function sendRegMails()
 {
   Utilities.sleep(75000);
@@ -29,7 +29,5 @@ function sendRegMails()
         GmailApp.sendEmail(ws.getRange(i,6,1,1).getValue(),sub,"Text",{name:"Ayush Kapoor",htmlBody: message1});
         ws.getRange(i,2,1,1).setValue('Yes')
     }
-    
-  }
-  
+  } 
 }
