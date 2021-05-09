@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu May 5 10:38:32 2021
-
 @author: Ayush Kapoor
 """
 #%% Importing Necessary Libraries
@@ -169,13 +168,14 @@ districtCodes = []
 while True:
     i=2
     while(sheet.cell(i,3).value!=None):
-        print(sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
+        print('* '+sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
         districtCodes.append(sheet.cell(i,7).value)
         i+=1  
     numRows = i-1
     districtCodes = list(set(districtCodes))
-    print('------------>'+str(numRows))
+    print('-----Last Row: '+str(numRows))
     for j in range(0,len(districtCodes)):
         print('------>'+str(districtCodes[j]))
         fetchDetails(cowin_api_url,districtCodes[j],numRows)
+    print('--------Last Fetched: '+datetime.now().strftime("%d/%m/%Y %H:%M:%S")+'------')
     time.sleep(1200)
