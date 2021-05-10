@@ -17,7 +17,6 @@ from email.utils import formataddr
 from openpyxl import load_workbook
 import urllib3
 
-
 #%% Variable Declarations
 file_path = "C:\\Users\\ayush.kapoor\\Desktop\\input.xlsx" 
 wb = load_workbook(filename= file_path,data_only=True)
@@ -139,8 +138,7 @@ def sendMail(districtId,data,numRows):
     from_password= "Ch3cooh!@"     
     i=2
     while(i<=numRows):
-        
-        if ((sheet.cell(i,7).value)==districtId):
+        if ((sheet.cell(i,7).value)==districtId and sheet.cell(i,1).value == "No"):
             print(str(sheet.cell(i,7).value))
             print(sheet.cell(i,3).value)
             msg = MIMEMultipart('alternative')
@@ -167,9 +165,10 @@ cowin_api_url = "https://api.cowin.gov.in/api/v2/appointment/sessions/public/cal
 districtCodes = []
 while True:
     i=2
-    while(sheet.cell(i,3).value!=None):
-        print('* '+sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
-        districtCodes.append(sheet.cell(i,7).value)
+    while(i<=sheet.cell(2,9).value):
+        if (sheet.cell(i,1).value =="No" and sheet.cell(i,6).value!=""):
+            print('* '+sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
+            districtCodes.append(sheet.cell(i,7).value)
         i+=1  
     numRows = i-1
     districtCodes = list(set(districtCodes))
