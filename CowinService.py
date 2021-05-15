@@ -95,7 +95,7 @@ def JSON2HTML(listObj,name):
         htmlTable+= obj.convert(json.dumps(temp))
         htmlTable+="<br>"
     htmlTable = htmlTable.replace("<ul>","").replace("</ul>","").replace("<li>"," ").replace("</li>","")
-    htmlTable = htmlTable.replace("date","Date").replace("available_capacity", "Available Slots").replace("min_age_limit","Minimum Age")   
+    htmlTable = htmlTable.replace("date","Date").replace("available_capacity", "Available Slots").replace("min_age_limit","Minimum Age").replace('Available Slots_dose1', 'Available Slots (Dose 1)').replace('Available Slots_dose2', 'Available Slots (Dose 2)')   
     htmlTable = htmlTable.replace("vaccine","Vaccine").replace("slots","Slot Timings")
     htmlTable = htmlTable.replace("center","Centre Description")
     htmlTable+= HTMLReady("getCss","")
@@ -177,4 +177,4 @@ while True:
         print('------>'+str(districtCodes[j]))
         fetchDetails(cowin_api_url,districtCodes[j],numRows)
     print('--------Last Fetched: '+datetime.now().strftime("%d/%m/%Y %H:%M:%S")+'------')
-    time.sleep(1200)
+    time.sleep(600)
