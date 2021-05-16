@@ -136,7 +136,7 @@ def sendMail(districtId,data,numRows):
     HOSTNAME = 'smtp.gmail.com'  
     PORT = '465'
     CONTEXT= ssl.create_default_context()
-    from_password= "Ch3cooh!@"     
+    from_password= ""     
     i=2
     while(i<=numRows):
         if ((sheet.cell(i,7).value)==districtId and sheet.cell(i,1).value == "No"):
@@ -158,9 +158,7 @@ def sendMail(districtId,data,numRows):
     
 #%% 
 #fetchStateDistrict()
-#key = ""
-#%% Main 
-# Driver setup 
+#%% Main Driver setup 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 cowin_api_url2 = "https://api.cowin.gov.in/api/v2/appointment/sessions/public/calendarByDistrict"
 cowin_api_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict"
