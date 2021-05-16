@@ -112,7 +112,7 @@ def fetchDetails(apiURL,districtId,numRows):
     local_timezone = timezone("Asia/Kolkata")
     local_date = local_timezone.localize(datetime.now())
     api_params = {"district_id": districtId, "date": local_date.strftime("%d-%m-%Y")}
-    api_request = requests.get(apiURL,params=api_params, verify = False)
+    api_request = requests.get(apiURL,params=api_params,verify = False)
     api_response = json.loads(api_request.text)
     centers = []
     for center in api_response["centers"]:
@@ -121,7 +121,8 @@ def fetchDetails(apiURL,districtId,numRows):
     sessionData = []
     for center in api_response["centers"]:
         for session in center["sessions"]:
-            if(session["min_age_limit"]<min_age and session["available_capacity"]>capacity):
+            # or (session["min_age_limit"]<min_age and session["available_capacity_dose2"]>capacity)
+            if((session["min_age_limit"]<min_age and session["available_capacity_dose1"]>capacity)):
                 session["center"]={"center_id":center["center_id"],"center_name":center["name"],"block_name":center["block_name"],"pincode":center["pincode"],"fee_type":center["fee_type"]}
                 print(length,center["name"],session["date"],"SUCCESS")
                 sessionData.append(session)
@@ -161,7 +162,8 @@ def sendMail(districtId,data,numRows):
 #%% Main 
 # Driver setup 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-cowin_api_url = "https://api.cowin.gov.in/api/v2/appointment/sessions/public/calendarByDistrict"
+cowin_api_url2 = "https://api.cowin.gov.in/api/v2/appointment/sessions/public/calendarByDistrict"
+cowin_api_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict"
 districtCodes = []
 while True:
     i=2
@@ -175,6 +177,6 @@ while True:
     print('-----Last Row: '+str(numRows))
     for j in range(0,len(districtCodes)):
         print('------>'+str(districtCodes[j]))
-        fetchDetails(cowin_api_url,districtCodes[j],numRows)
+        fetchDetails(cowin_api_url2,districtCodes[j],numRows)
     print('--------Last Fetched: '+datetime.now().strftime("%d/%m/%Y %H:%M:%S")+'------')
     time.sleep(600)
