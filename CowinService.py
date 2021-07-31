@@ -13,7 +13,6 @@ import smtplib,ssl
 from json2html import *
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formataddr
 from openpyxl import load_workbook
 import urllib3
 
@@ -64,7 +63,7 @@ def fetchStateDistrict():
     print("Database Fetched")
     
 # A helper function to make the email text html friendly    
-def HTMLReady (str_,name):
+def HTMLReady (str_ , name):
     if(str_ == "opners"):
         return "<!DOCTYPE html><html><body font-family: Arial;>"
     if(str_ == "mail_header"):
@@ -78,7 +77,7 @@ def HTMLReady (str_,name):
     return ""
 
 # Function to convert the JSON received from the API to HTML        
-def JSON2HTML(listObj,name):
+def JSON2HTML(listObj , name):
     htmlTable =""
     htmlTable = HTMLReady("openers","")
     htmlTable+= HTMLReady("mail_header",name)
@@ -108,7 +107,7 @@ def JSON2HTML(listObj,name):
 def fetchDetails(apiURL,districtId,numRows):
     # Conditions of fetching from the CoWin API
     min_age = 45
-    capacity = 0
+    capacity = 1
     local_timezone = timezone("Asia/Kolkata")
     local_date = local_timezone.localize(datetime.now())
     api_params = {"district_id": districtId, "date": local_date.strftime("%d-%m-%Y")}
@@ -117,7 +116,8 @@ def fetchDetails(apiURL,districtId,numRows):
     centers = []
     for center in api_response["centers"]:
         centers.append(center["name"])
-    length = len(max(centers, key=len))
+    if (len(centers)!= 0):
+        length = len(max(centers, key=len))
     sessionData = []
     for center in api_response["centers"]:
         for session in center["sessions"]:
@@ -136,7 +136,7 @@ def sendMail(districtId,data,numRows):
     HOSTNAME = 'smtp.gmail.com'  
     PORT = '465'
     CONTEXT= ssl.create_default_context()
-    from_password= ""     
+    from_password= "Ch3cooh!@"     
     i=2
     while(i<=numRows):
         if ((sheet.cell(i,7).value)==districtId and sheet.cell(i,1).value == "No"):
@@ -158,23 +158,32 @@ def sendMail(districtId,data,numRows):
     
 #%% 
 #fetchStateDistrict()
-#%% Main Driver setup 
+#key = ""
+#%% Main 
+# Driver setup
+dataDict = {}
+tempList = [] 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 cowin_api_url2 = "https://api.cowin.gov.in/api/v2/appointment/sessions/public/calendarByDistrict"
-cowin_api_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict"
+cowin_api_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict"
 districtCodes = []
-while True:
-    i=2
-    while(i<=sheet.cell(2,9).value):
-        if (sheet.cell(i,1).value =="No" and sheet.cell(i,6).value!=""):
-            print('* '+sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
-            districtCodes.append(sheet.cell(i,7).value)
-        i+=1  
-    numRows = i-1
-    districtCodes = list(set(districtCodes))
-    print('-----Last Row: '+str(numRows))
-    for j in range(0,len(districtCodes)):
-        print('------>'+str(districtCodes[j]))
-        fetchDetails(cowin_api_url2,districtCodes[j],numRows)
-    print('--------Last Fetched: '+datetime.now().strftime("%d/%m/%Y %H:%M:%S")+'------')
-    time.sleep(600)
+#while True:
+i=2
+count = 0
+while(i<=sheet.cell(2,9).value):
+    if (sheet.cell(i,1).value =="No" and sheet.cell(i,6).value!=""):
+        print ('* '+sheet.cell(i,3).value+' | '+ str(sheet.cell(i,7).value))
+        dataDict[sheet.cell(i,7).value] = (sheet.cell(i,3).value)
+        districtCodes.append(sheet.cell(i,7).value)
+        print (tempList)
+    del tempList[:]
+    count+=1
+    i+=1
+numRows = i-1
+districtCodes = list(set(districtCodes))
+#%%
+print('-----Last Row: '+str(numRows))
+for j in range(0,len(districtCodes)):
+    print('------>'+str(districtCodes[j]))
+    fetchDetails(cowin_api_url2,districtCodes[j],numRows)
+print('--------Last Fetched: '+datetime.now().strftime("%d/%m/%Y %H:%M:%S")+'------')
